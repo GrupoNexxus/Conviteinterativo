@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Um convite pra você 🧺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ceu: #bfe3f5;
+    --ceu-fundo: #e9f6fc;
+    --grama: #6fae4f;
+    --toalha: #e4574d;
+    --papel: #fffaf0;
+    --tinta: #2e3a2a;
+    --sol: #ffcf3f;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ceu: #2b4a6b;
+      --ceu-fundo: #1c3149;
+      --grama: #3f7a32;
+      --papel: #fff6e4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ceu: #2b4a6b;
+    --ceu-fundo: #1c3149;
+    --grama: #3f7a32;
+    --papel: #fff6e4;
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: "Shantell Sans", "Comic Sans MS", "Segoe UI", system-ui, sans-serif;
+    color: var(--tinta);
+    background: linear-gradient(to bottom, var(--ceu-fundo) 0%, var(--ceu) 62%, var(--grama) 62%);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+  }
+
+  .sol {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 6vh);
+    right: 9vw;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: var(--sol);
+    box-shadow: 0 0 0 14px rgba(255, 207, 63, .25), 0 0 0 30px rgba(255, 207, 63, .12);
+    animation: girar 9s ease-in-out infinite alternate;
+  }
+  @keyframes girar { to { transform: scale(1.08); } }
+
+  /* toalha xadrez */
+  .toalha {
+    position: relative;
+    width: min(460px, 100%);
+    padding: 22px;
+    border-radius: 6px;
+    background-color: #fff;
+    background-image:
+      linear-gradient(90deg, rgba(228,87,77,.55) 50%, transparent 50%),
+      linear-gradient(rgba(228,87,77,.55) 50%, transparent 50%);
+    background-size: 36px 36px;
+    transform: rotate(-2deg);
+    box-shadow: 0 18px 30px -12px rgba(30, 50, 20, .45);
+  }
+
+  .bilhete {
+    background: var(--papel);
+    border-radius: 4px;
+    padding: 2.2rem 1.8rem 2rem;
+    text-align: center;
+    transform: rotate(3deg);
+    box-shadow: 0 6px 14px rgba(0,0,0,.18);
+  }
+
+  .cesta { font-size: 3.2rem; line-height: 1; display: block; margin-bottom: .6rem; }
+
+  h1 {
+    font-weight: 800;
+    font-size: clamp(1.7rem, 6vw, 2.3rem);
+    line-height: 1.15;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+
+  .quando {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 1.15rem;
+    padding: .35rem .9rem;
+    border: 2px dashed var(--toalha);
+    border-radius: 999px;
+    margin-bottom: 1.8rem;
+  }
+
+  .botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    min-height: 64px;
+  }
+
+  button {
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 14px;
+    padding: .75rem 1.8rem;
+    cursor: pointer;
+  }
+  button:focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
+
+  #sim {
+    background: var(--grama);
+    color: #fff;
+    box-shadow: 0 4px 0 #3d6e2a;
+    transition: transform .25s ease;
+  }
+  #sim:active { transform: translateY(3px) !important; box-shadow: 0 1px 0 #3d6e2a; }
+
+  #nao {
+    background: #fff;
+    color: var(--toalha);
+    border: 2px solid var(--toalha);
+    transition: left .4s ease, top .4s ease;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  #nao.fugindo { position: fixed; }
+
+  /* tela de resposta */
+  .resposta {
+    position: fixed; inset: 0;
+    display: none;
+    place-items: center;
+    padding: 1.25rem;
+    z-index: 20;
+  }
+  .resposta.ativa { display: grid; }
+  .resposta .bilhete { max-width: 420px; animation: chegar .5s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes chegar { from { transform: rotate(3deg) scale(.6); opacity: 0; } }
+  .resposta p { font-size: 1.15rem; line-height: 1.6; margin: 0; }
+
+  .confete {
+    position: fixed;
+    top: -40px;
+    font-size: 1.8rem;
+    pointer-events: none;
+    animation: cair linear forwards;
+    z-index: 30;
+  }
+  @keyframes cair { to { transform: translateY(115vh) rotate(540deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sol, .confete { animation: none; }
+    #nao { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="sol" aria-hidden="true"></div>
+
+  <main class="toalha" id="convite">
+    <div class="bilhete">
+      <span class="cesta" aria-hidden="true">🧺</span>
+      <h1>Você aceita ir a um piquenique comigo?</h1>
+      <div class="quando">📅 Dia 03/10 às 9h</div>
+      <div class="botoes">
+        <button id="sim" type="button">Sim</button>
+        <button id="nao" type="button">Não</button>
+      </div>
+    </div>
+  </main>
+
+  <section class="resposta" id="resposta" aria-live="polite">
+    <div class="toalha">
+      <div class="bilhete">
+        <span class="cesta" aria-hidden="true">🥰</span>
+        <h1>Eba! Combinado!</h1>
+        <p>Te vejo dia 03/10 às 9h.<br>Eu levo a cesta, você leva o sorriso. 🍓🥪🧃</p>
+      </div>
+    </div>
+  </section>
+
+<script>
+  const nao = document.getElementById('nao');
+  const sim = document.getElementById('sim');
+  const frases = ['Não', 'Tem certeza?', 'Pensa bem...', 'Errou o botão', 'Nem pensar!', 'Tenta o outro 😏', 'Quase!', 'Desiste 😂'];
+  let fugas = 0;
+
+  let ocupado = false;
+
+  function fugir(px, py) {
+    if (ocupado) return; // espera terminar o pulo anterior antes de pular de novo
+    ocupado = true;
+    setTimeout(() => { ocupado = false; }, 350);
+
+    const margem = 20;
+    // na primeira fuga, o botão sai do cartão e passa a flutuar pela tela
+    if (!nao.classList.contains('fugindo')) {
+      const r = nao.getBoundingClientRect();
+      // deixa um espaço no lugar dele para o botão Sim não mudar de posição
+      const espaco = document.createElement('span');
+      espaco.style.cssText = `display:inline-block;width:${r.width}px;height:${r.height}px`;
+      nao.parentNode.insertBefore(espaco, nao);
+      // move para o body: o cartão é inclinado e isso fazia o botão sair da tela
+      document.body.appendChild(nao);
+      nao.classList.add('fugindo');
+      nao.style.left = r.left + 'px';
+      nao.style.top = r.top + 'px';
+      nao.offsetWidth; // aplica a posição antes de animar
+    }
+    fugas++;
+    nao.textContent = frases[fugas % frases.length];
+
+    const largura = nao.offsetWidth, altura = nao.offsetHeight;
+    const maxX = window.innerWidth - largura - margem;
+    const maxY = window.innerHeight - altura - margem;
+    const atual = nao.getBoundingClientRect();
+    const cx = atual.left + largura / 2, cy = atual.top + altura / 2;
+
+    // direção: para longe do dedo/cursor (ou aleatória, se não houver)
+    let ang = (px == null) ? Math.random() * Math.PI * 2 : Math.atan2(cy - py, cx - px);
+    let x, y, tentativas = 0;
+    do {
+      const dist = 120 + Math.random() * 80;          // pulo curto, sempre visível
+      const a = ang + (Math.random() - 0.5) * (tentativas < 10 ? 1.2 : 6.3);
+      x = Math.min(Math.max(atual.left + Math.cos(a) * dist, margem), maxX);
+      y = Math.min(Math.max(atual.top + Math.sin(a) * dist, margem), maxY);
+      tentativas++;
+    } while (tentativas < 40 && (perto(x, y, sim, 20) || Math.hypot(x - atual.left, y - atual.top) < 70));
+
+    nao.style.left = x + 'px';
+    nao.style.top = y + 'px';
+
+    // o Sim cresce um pouquinho a cada tentativa
+    const escala = Math.min(1 + fugas * 0.08, 1.8);
+    sim.style.transform = `scale(${escala})`;
+  }
+
+  function perto(x, y, el, folga) {
+    const r = el.getBoundingClientRect();
+    return x > r.left - folga - nao.offsetWidth && x < r.right + folga &&
+           y > r.top - folga - nao.offsetHeight && y < r.bottom + folga;
+  }
+
+  // mouse: foge quando o cursor chega perto
+  document.addEventListener('mousemove', (e) => {
+    const r = nao.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    if (Math.hypot(e.clientX - cx, e.clientY - cy) < Math.max(r.width, r.height) * 0.9 + 40) fugir(e.clientX, e.clientY);
+  });
+
+  // celular: foge assim que o dedo encosta
+  nao.addEventListener('touchstart', (e) => { e.preventDefault(); const t = e.touches[0]; fugir(t.clientX, t.clientY); }, { passive: false });
+
+  // teclado ou clique que conseguiu escapar: foge do mesmo jeito
+  nao.addEventListener('focus', () => fugir());
+  nao.addEventListener('click', (e) => { e.preventDefault(); fugir(); });
+
+  window.addEventListener('resize', () => {
+    if (!nao.classList.contains('fugindo')) return;
+    // se a tela diminuir, traz o botão de volta para dentro
+    const m = 20;
+    nao.style.left = Math.min(parseFloat(nao.style.left), window.innerWidth - nao.offsetWidth - m) + 'px';
+    nao.style.top = Math.min(parseFloat(nao.style.top), window.innerHeight - nao.offsetHeight - m) + 'px';
+  });
+
+  sim.addEventListener('click', () => {
+    document.getElementById('convite').style.display = 'none';
+    nao.style.display = 'none';
+    document.getElementById('resposta').classList.add('ativa');
+    soltarConfete();
+  });
+
+  function soltarConfete() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const itens = ['🍓', '🌼', '💛', '🥪', '🍉', '🌸', '❤️'];
+    for (let i = 0; i < 45; i++) {
+      const c = document.createElement('span');
+      c.className = 'confete';
+      c.textContent = itens[Math.floor(Math.random() * itens.length)];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.animationDuration = 2.5 + Math.random() * 2.5 + 's';
+      c.style.animationDelay = Math.random() * 1.2 + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 6500);
+    }
+  }
+</script>
+</body>
+</html>
